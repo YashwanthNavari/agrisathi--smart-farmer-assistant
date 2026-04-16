@@ -218,7 +218,4 @@ export const ExpertChat: React.FC = () => {
       </div>
     </div>
   );
-};
->
-  );
-};
+};
