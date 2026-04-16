@@ -1,13 +1,16 @@
 /**
  * AgriSathi AI Advisory Service
- * Powered by Google Gemini AI for intelligent agricultural assistance
+ * Uses Google Gemini REST API for intelligent agricultural assistance
  */
 
-const GEMINI_API_KEY = (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) || 
-                       (typeof process !== 'undefined' && process.env?.API_KEY) || '';
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+// These are replaced at build time by Vite's define plugin
+declare const process: { env: { GEMINI_API_KEY?: string; API_KEY?: string } };
 
-// --- System Personas ---
+const GEMINI_API_KEY: string = process.env.GEMINI_API_KEY || process.env.API_KEY || '';
+const GEMINI_API_URL =
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+
+// ─── System Personas ──────────────────────────────────────────────────────────
 
 const EXPERT_SYSTEM_INSTRUCTION = `
 You are AgriSathi, a friendly and knowledgeable agricultural expert assistant for Indian farmers.
@@ -24,49 +27,60 @@ Prefer giving region-specific advice for Indian climates.
 If asked about non-agricultural topics, politely redirect to farming.
 `.trim();
 
-// --- Core fetch wrapper ---
+// ─── Core API caller ──────────────────────────────────────────────────────────
 
 async function callGeminiAPI(requestBody: object): Promise<string> {
   if (!GEMINI_API_KEY) {
-    return 'API key not configured. Please set GEMINI_API_KEY in your environment.';
+    return 'ℹ️ AI features require a Gemini API key. Please configure GEMINI_API_KEY in your environment.';
   }
+
   const res = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(requestBody),
   });
+
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `API Error: ${res.status}`);
+    const err = await res.json().catch(() => ({})) as { error?: { message?: string } };
+    throw new Error(err?.error?.message || `API Error ${res.status}`);
   }
-  const data = await res.json();
+
+  const data = await res.json() as {
+    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+  };
+
   return data?.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
 }
 
-// --- Public API ---
+// ─── Public API ───────────────────────────────────────────────────────────────
 
 /**
  * Get expert agricultural advice for a farmer's query.
  */
-export async function getExpertAdvice(message: string, history: string[] = []): Promise<string> {
-  try {
-    const contextHistory =
-      history.length > 0
-        ? `\nConversation History:\n${history.slice(-6).join('\n')}\n\n`
-        : '';
-    const requestBody = {
-      system_instruction: { parts: [{ text: EXPERT_SYSTEM_INSTRUCTION }] },
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: `${contextHistory}Farmer's Question: ${message}` }],
-        },
-      ],
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 1024,
+export async function getExpertAdvice(
+  message: string,
+  history: string[] = []
+): Promise<string> {
+  const contextHistory =
+    history.length > 0
+      ? `\nConversation History:\n${history.slice(-6).join('\n')}\n\n`
+      : '';
+
+  const requestBody = {
+    system_instruction: { parts: [{ text: EXPERT_SYSTEM_INSTRUCTION }] },
+    contents: [
+      {
+        role: 'user',
+        parts: [{ text: `${contextHistory}Farmer's Question: ${message}` }],
       },
-    };
+    ],
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 1024,
+    },
+  };
+
+  try {
     return await callGeminiAPI(requestBody);
   } catch (error) {
     console.error('AgriSathi Chat Error:', error);
@@ -78,53 +92,56 @@ export async function getExpertAdvice(message: string, history: string[] = []): 
  * Analyze a plant image for disease or pest identification.
  */
 export async function analyzePlantDisease(base64Image: string): Promise<string> {
-  try {
-    const base64Data = base64Image.includes(',')
-      ? base64Image.split(',')[1]
-      : base64Image;
-    const mimeType = base64Image.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
+  const base64Data = base64Image.includes(',')
+    ? base64Image.split(',')[1]
+    : base64Image;
+  const mimeType: string = base64Image.startsWith('data:image/png')
+    ? 'image/png'
+    : 'image/jpeg';
 
-    const requestBody = {
-      contents: [
-        {
-          parts: [
-            {
-              inline_data: {
-                mime_type: mimeType,
-                data: base64Data,
-              },
+  const requestBody = {
+    contents: [
+      {
+        parts: [
+          {
+            inline_data: {
+              mime_type: mimeType,
+              data: base64Data,
             },
-            {
-              text: `You are an expert plant pathologist. Analyze this plant image and provide:
+          },
+          {
+            text: `You are an expert plant pathologist. Analyze this plant image and provide a structured diagnosis:
 
 ## 🌿 Crop Identification
 Identify the crop species visible in the image.
 
 ## 🔍 Disease / Pest Diagnosis
-Identify any disease, pest, or nutrient deficiency. If healthy, say so.
+Identify any disease, pest, or nutrient deficiency. If the plant looks healthy, state that clearly.
 
 ## 📖 Why It Happens
-Briefly explain the cause (pathogen type, environmental trigger, etc.).
+Briefly explain the root cause.
 
 ## 🌱 Organic Treatment
-Suggest 2-3 practical organic/natural remedies.
+Suggest 2-3 practical organic or natural remedies.
 
 ## 💊 Chemical Treatment
-Suggest specific fungicide/pesticide with dosage if needed.
+Recommend specific products with dosage if chemical control is needed.
 
 ## ⚠️ Precautions
-Key safety or application notes for the farmer.
+Key safety or timing notes for the farmer.
 
-Be concise and practical. Use simple language suitable for Indian farmers.`,
-            },
-          ],
-        },
-      ],
-      generationConfig: {
-        temperature: 0.4,
-        maxOutputTokens: 1200,
+Use simple language suitable for Indian farmers. Be practical and concise.`,
+          },
+        ],
       },
-    };
+    ],
+    generationConfig: {
+      temperature: 0.4,
+      maxOutputTokens: 1200,
+    },
+  };
+
+  try {
     return await callGeminiAPI(requestBody);
   } catch (error) {
     console.error('AgriSathi Vision Error:', error);
@@ -133,27 +150,29 @@ Be concise and practical. Use simple language suitable for Indian farmers.`,
 }
 
 /**
- * Generate market insights summary from product data.
+ * Generate market insights summary from product/price data.
  */
-export async function generateMarketInsights(products: Array<Record<string, unknown>>): Promise<string> {
+export async function generateMarketInsights(
+  products: Array<Record<string, unknown>>
+): Promise<string> {
+  const requestBody = {
+    contents: [
+      {
+        parts: [
+          {
+            text: `Based on this local market data: ${JSON.stringify(products.slice(0, 8))}
+            
+Write a brief 2-sentence market summary for a farmer. Highlight any notable price trends or crop availability issues.`,
+          },
+        ],
+      },
+    ],
+    generationConfig: { temperature: 0.3, maxOutputTokens: 150 },
+  };
+
   try {
-    const productSummary = JSON.stringify(products.slice(0, 8));
-    const requestBody = {
-      contents: [
-        {
-          parts: [
-            {
-              text: `Based on this market data: ${productSummary}
-              
-Give a brief 2-sentence market summary for a farmer. Highlight any notable price trends or availability.`,
-            },
-          ],
-        },
-      ],
-      generationConfig: { temperature: 0.3, maxOutputTokens: 150 },
-    };
     return await callGeminiAPI(requestBody);
   } catch {
-    return 'Market data currently unavailable. Please check local mandi for latest rates.';
+    return 'Market data currently unavailable. Please check your local mandi for the latest rates.';
   }
 }

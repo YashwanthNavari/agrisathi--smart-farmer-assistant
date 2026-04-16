@@ -1,0 +1,1 @@
+{"root":["./app.tsx","./index.tsx","./types.ts","./vite.config.ts","./components/dashboard.tsx","./components/diseasedetector.tsx","./components/expertchat.tsx","./components/farmmanagement.tsx","./components/header.tsx","./components/marketplace.tsx","./components/schemes.tsx","./services/geminiservice.ts"],"version":"5.7.3"}
