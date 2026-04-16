@@ -82,6 +82,7 @@ const App: React.FC = () => {
       <Header 
         title="AgriSathi" 
         onMenuClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+        cartCount={cartCount}
       />
 
       {/* Main Content Area - Scrollable */}

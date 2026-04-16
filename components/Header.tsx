@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, User, Menu, Hexagon } from 'lucide-react';
+import { Bell, User, Menu, Hexagon, ShoppingCart } from 'lucide-react';
 
 interface HeaderProps {
   title: string;
