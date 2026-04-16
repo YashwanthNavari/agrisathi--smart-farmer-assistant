@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, User, Menu } from 'lucide-react';
+import { Bell, User, Menu, Hexagon } from 'lucide-react';
 
 interface HeaderProps {
   title: string;
@@ -8,39 +8,48 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ title, onMenuClick }) => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/40 shadow-sm">
-      <div className="max-w-4xl mx-auto px-6 h-18 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+    <header className="fixed top-0 left-0 right-0 z-[100] glass-pro border-b border-white/20">
+      <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div className="flex items-center space-x-6">
           <button 
             onClick={onMenuClick} 
-            className="p-2.5 hover:bg-slate-100 rounded-xl transition-colors md:hidden text-slate-600"
+            className="p-3 hover:bg-agri-50 rounded-2xl transition-all md:hidden text-slate-600 active:scale-90"
           >
-            <Menu size={22} />
+            <Menu size={24} />
           </button>
-          <div className="flex items-center gap-3">
-             <div className="w-10 h-10 bg-agri-600 rounded-xl flex items-center justify-center shadow-lg shadow-agri-600/30 rotate-3 animate-float">
-               <span className="text-xl">🌾</span>
+          
+          <div className="flex items-center gap-4 group cursor-pointer">
+             <div className="relative">
+                <div className="absolute inset-0 bg-agri-600 blur-lg opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                <div className="w-12 h-12 bg-agri-950 rounded-2xl flex items-center justify-center shadow-2xl relative z-10 overflow-hidden">
+                   <div className="absolute top-0 right-0 w-6 h-6 bg-agri-gold/20 rounded-full -mr-2 -mt-2"></div>
+                   <span className="text-2xl animate-float">🌾</span>
+                </div>
              </div>
-             <div>
-               <h1 className="text-xl font-extrabold tracking-tight text-slate-800 leading-none">{title}</h1>
-               <p className="text-[10px] font-bold text-agri-600 uppercase tracking-widest mt-0.5">Premium Assistant</p>
+             <div className="hidden sm:block">
+                <h1 className="text-xl font-black tracking-tighter text-slate-900 leading-none mb-1">AgriSathi <span className="text-agri-gold italic">Pro</span></h1>
+                <p className="text-[9px] font-black text-agri-600 uppercase tracking-[0.2em]">Next-Gen Assistant</p>
              </div>
           </div>
         </div>
         
-        <div className="flex items-center space-x-3">
-          <button className="p-2.5 hover:bg-slate-100 rounded-xl relative text-slate-600 transition-colors">
-            <Bell size={20} />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+        <div className="flex items-center space-x-4">
+          <button className="p-3.5 hover:bg-slate-50 rounded-2xl relative text-slate-400 transition-all hover:text-agri-600">
+            <Bell size={22} strokeWidth={2.5} />
+            <span className="absolute top-3.5 right-3.5 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white animate-pulse"></span>
           </button>
-          <button className="flex items-center gap-2 pl-1 pr-3 py-1 bg-slate-100 hover:bg-slate-200 rounded-full transition-all border border-slate-200 group">
-            <div className="w-8 h-8 rounded-full bg-agri-700 flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform">
-              <User size={16} />
+          
+          <button className="flex items-center gap-3 pl-1 pr-4 py-1.5 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-all group">
+            <div className="w-10 h-10 rounded-xl bg-agri-950 flex items-center justify-center text-agri-gold shadow-lg group-hover:rotate-6 transition-transform">
+              <User size={20} />
             </div>
-            <span className="text-xs font-bold text-slate-700 hidden sm:inline">Farmer John</span>
+            <div className="hidden lg:block text-left">
+               <span className="block text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-0.5">Profile</span>
+               <span className="text-xs font-black text-slate-800">Yashwanth</span>
+            </div>
           </button>
         </div>
       </div>
     </header>
   );
-};
+};
