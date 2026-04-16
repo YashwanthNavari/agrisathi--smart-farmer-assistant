@@ -1,0 +1,9 @@
+{
+  "name": "AgriSathi – Smart Farmer Assistant",
+  "version": "1.0.0",
+  "description": "An AI-powered all-in-one mobile application for Indian farmers featuring crop disease detection, marketplace, expert advisory chatbot, government scheme navigator, and farm lifecycle management.",
+  "author": "Yashwanth Navari",
+  "repository": "https://github.com/YashwanthNavari/agrisathi--smart-farmer-assistant",
+  "keywords": ["agriculture", "AI", "crop-disease", "smart-farming", "India", "gemini"],
+  "permissions": ["camera", "microphone", "geolocation"]
+}
