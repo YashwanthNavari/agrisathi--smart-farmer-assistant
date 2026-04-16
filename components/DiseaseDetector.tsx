@@ -3,7 +3,11 @@ import { Camera, RefreshCw, Loader2, CheckCircle2, AlertCircle, Share2, Printer,
 import { analyzePlantDisease } from '../services/geminiService';
 import ReactMarkdown from 'react-markdown';
 
-export const DiseaseDetector: React.FC = () => {
+interface DiseaseDetectorProps {
+  onOpenMarketplace: () => void;
+}
+
+export const DiseaseDetector: React.FC<DiseaseDetectorProps> = ({ onOpenMarketplace }) => {
   const [image, setImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [diagnosis, setDiagnosis] = useState<string | null>(null);
@@ -149,7 +153,10 @@ export const DiseaseDetector: React.FC = () => {
                       <h5 className="text-sm font-black text-slate-800">Need specific supplies?</h5>
                       <p className="text-xs text-slate-500 font-medium italic text-center sm:text-left">Treatment items are available in the marketplace.</p>
                     </div>
-                    <button className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-agri-700 transition-all group">
+                    <button 
+                      onClick={onOpenMarketplace}
+                      className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-agri-700 transition-all group"
+                    >
                       Open Marketplace <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                     </button>
                   </div>

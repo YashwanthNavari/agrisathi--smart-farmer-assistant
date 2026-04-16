@@ -16,10 +16,28 @@ const MANDI_RATES = [
   { id: '3', commodity: 'Cotton', market: 'Akola Mandi', price: 7000, trend: 'stable', updated: 'Yesterday' },
 ];
 
-export const Marketplace: React.FC = () => {
+interface MarketplaceProps {
+  onAddToCart: () => void;
+}
+
+export const Marketplace: React.FC<MarketplaceProps> = ({ onAddToCart }) => {
   const [activeTab, setActiveTab] = useState<'buy' | 'mandi'>('buy');
   const [filter, setFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [mandiRates, setMandiRates] = useState(MANDI_RATES);
+
+  // Simulate Live Mandi Updates
+  useEffect(() => {
+    if (activeTab === 'mandi') {
+      const interval = setInterval(() => {
+        setMandiRates(prev => prev.map(r => ({
+          ...r,
+          price: r.price + Math.floor(Math.random() * 20 - 10)
+        })));
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [activeTab]);
 
   const categories = ['All', 'Supplies', 'Rental', 'Equipment'];
 
@@ -129,7 +147,10 @@ export const Marketplace: React.FC = () => {
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pricing</span>
                       <span className="text-2xl font-black text-slate-900">{typeof product.price === 'number' ? `₹${product.price}` : product.price}</span>
                     </div>
-                    <button className="flex-1 flex items-center justify-center gap-3 bg-slate-900 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-agri-600 transition-all active:scale-90 group/btn shadow-xl shadow-slate-200">
+                    <button 
+                      onClick={onAddToCart}
+                      className="flex-1 flex items-center justify-center gap-3 bg-slate-900 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-agri-600 transition-all active:scale-90 group/btn shadow-xl shadow-slate-200"
+                    >
                       Order <ShoppingCart size={18} className="group-hover/btn:translate-x-1 transition-transform" />
                     </button>
                   </div>
@@ -149,7 +170,7 @@ export const Marketplace: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {MANDI_RATES.map((rate) => (
+            {mandiRates.map((rate) => (
               <div key={rate.id} className="bg-white p-7 rounded-[40px] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all group">
                 <div className="flex justify-between items-start mb-6">
                   <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">

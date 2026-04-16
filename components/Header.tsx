@@ -4,9 +4,10 @@ import { Bell, User, Menu, Hexagon } from 'lucide-react';
 interface HeaderProps {
   title: string;
   onMenuClick: () => void;
+  cartCount: number;
 }
 
-export const Header: React.FC<HeaderProps> = ({ title, onMenuClick }) => {
+export const Header: React.FC<HeaderProps> = ({ title, onMenuClick, cartCount }) => {
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] glass-pro border-b border-white/20">
       <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -35,8 +36,12 @@ export const Header: React.FC<HeaderProps> = ({ title, onMenuClick }) => {
         
         <div className="flex items-center space-x-4">
           <button className="p-3.5 hover:bg-slate-50 rounded-2xl relative text-slate-400 transition-all hover:text-agri-600">
-            <Bell size={22} strokeWidth={2.5} />
-            <span className="absolute top-3.5 right-3.5 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white animate-pulse"></span>
+            <ShoppingCart size={22} strokeWidth={2.5} />
+            {cartCount > 0 && (
+              <span className="absolute top-2 right-2 w-5 h-5 bg-rose-500 text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white animate-bounce">
+                {cartCount}
+              </span>
+            )}
           </button>
           
           <button className="flex items-center gap-3 pl-1 pr-4 py-1.5 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-all group">

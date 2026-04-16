@@ -18,9 +18,88 @@ const NUTRIENTS = [
   { name: 'Potassium (K)', val: 88, color: 'from-indigo-400 to-indigo-600', level: 'High' },
 ];
 
-export const FarmManagement: React.FC = () => {
+interface FarmManagementProps {
+  crops: any[];
+  setCrops: (crops: any[]) => void;
+}
+
+export const FarmManagement: React.FC<FarmManagementProps> = ({ crops, setCrops }) => {
+  const [isAddingPlot, setIsAddingPlot] = useState(false);
+  const [newCrop, setNewCrop] = useState({ name: '', variety: '', area: '' });
+
+  const addPlot = () => {
+    if (!newCrop.name || !newCrop.area) return;
+    const crop = {
+      id: Date.now(),
+      ...newCrop,
+      planted: 'Today',
+      status: 'Healthy',
+      growth: 1,
+      nextTask: 'Initial Watering'
+    };
+    setCrops([...crops, crop]);
+    setIsAddingPlot(false);
+    setNewCrop({ name: '', variety: '', area: '' });
+  };
+
   return (
     <div className="space-y-8 pb-32 animate-fade-in-up">
+      {/* Add Plot Modal Overlay */}
+      {isAddingPlot && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+           <div className="absolute inset-0 bg-agri-950/60 backdrop-blur-md" onClick={() => setIsAddingPlot(false)}></div>
+           <div className="relative bg-white w-full max-w-md rounded-[48px] p-10 shadow-2xl animate-fade-in-up">
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-6">Register New Plot</h3>
+              <div className="space-y-4">
+                 <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Crop Name</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Basmati Rice"
+                      className="w-full bg-slate-50 border border-slate-100 p-5 rounded-2xl font-bold focus:bg-white focus:border-agri-500 outline-none transition-all"
+                      value={newCrop.name}
+                      onChange={e => setNewCrop({...newCrop, name: e.target.value})}
+                    />
+                 </div>
+                 <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Variety</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Type-3"
+                      className="w-full bg-slate-50 border border-slate-100 p-5 rounded-2xl font-bold focus:bg-white focus:border-agri-500 outline-none transition-all"
+                      value={newCrop.variety}
+                      onChange={e => setNewCrop({...newCrop, variety: e.target.value})}
+                    />
+                 </div>
+                 <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Area (Acres)</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. 1.5"
+                      className="w-full bg-slate-50 border border-slate-100 p-5 rounded-2xl font-bold focus:bg-white focus:border-agri-500 outline-none transition-all"
+                      value={newCrop.area}
+                      onChange={e => setNewCrop({...newCrop, area: e.target.value})}
+                    />
+                 </div>
+              </div>
+              <div className="mt-10 flex gap-3">
+                 <button 
+                   onClick={() => setIsAddingPlot(false)}
+                   className="flex-1 bg-slate-100 text-slate-600 font-black uppercase text-[10px] tracking-widest py-4 rounded-3xl"
+                 >
+                   Cancel
+                 </button>
+                 <button 
+                   onClick={addPlot}
+                   className="flex-[2] bg-agri-950 text-white font-black uppercase text-[10px] tracking-widest py-4 rounded-3xl shadow-xl active:scale-95 transition-all"
+                 >
+                   Confirm Record
+                 </button>
+              </div>
+           </div>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
            <div className="flex items-center gap-2 mb-2">
@@ -29,7 +108,10 @@ export const FarmManagement: React.FC = () => {
           <h2 className="text-4xl font-black text-slate-900 tracking-tighter leading-none mb-1">Farm Management</h2>
           <p className="text-slate-500 font-medium text-sm">Automated tracking for high-yield precision farming.</p>
         </div>
-        <button className="flex items-center gap-2 bg-agri-950 hover:bg-agri-800 text-white px-8 py-4 rounded-[24px] font-black text-xs uppercase tracking-widest shadow-2xl shadow-agri-900/10 active:scale-95 transition-all">
+        <button 
+          onClick={() => setIsAddingPlot(true)}
+          className="flex items-center gap-2 bg-agri-950 hover:bg-agri-800 text-white px-8 py-4 rounded-[24px] font-black text-xs uppercase tracking-widest shadow-2xl shadow-agri-900/10 active:scale-95 transition-all"
+        >
           <Plus size={18} /> Register Plot
         </button>
       </div>
@@ -103,7 +185,7 @@ export const FarmManagement: React.FC = () => {
           </div>
           
           <div className="space-y-4">
-            {MY_CROPS.map((crop) => (
+            {crops.map((crop) => (
               <div key={crop.id} className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm group hover:border-agri-400 transition-all">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
                   <div className="flex items-center gap-5">

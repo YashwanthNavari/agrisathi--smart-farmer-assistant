@@ -104,11 +104,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ onViewChange }) => {
             </h3>
             <div className="space-y-3">
                {[
-                 { label: 'Fertilizer Optimization', status: 'Ready', color: 'bg-agri-50 text-agri-600' },
-                 { label: 'Pest Alert (Cotton)', status: 'Urgent', color: 'bg-rose-50 text-rose-600' },
-                 { label: 'Irrigation Schedule', status: 'Manual', color: 'bg-blue-50 text-blue-600' }
+                 { label: 'Crop Healing (AI Scan)', view: View.DISEASE_DETECTION, status: 'Ready', color: 'bg-rose-50 text-rose-600' },
+                 { label: 'Farming Plan', view: View.FARM_MANAGEMENT, status: 'Active', color: 'bg-agri-50 text-agri-600' },
+                 { label: 'Market Insights', view: View.MARKETPLACE, status: 'Live', color: 'bg-blue-50 text-blue-600' }
                ].map((task, i) => (
-                 <div key={i} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 group cursor-pointer hover:bg-white transition-all">
+                 <div 
+                   key={i} 
+                   onClick={() => onViewChange(task.view)}
+                   className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 group cursor-pointer hover:bg-white transition-all active:scale-95"
+                 >
                     <span className="text-sm font-black text-slate-700 tracking-tight">{task.label}</span>
                     <div className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${task.color}`}>
                       {task.status}

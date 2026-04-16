@@ -14,6 +14,7 @@ import { ExpertChat } from './components/ExpertChat';
 import { FarmManagement } from './components/FarmManagement';
 import { Schemes } from './components/Schemes';
 import { Header } from './components/Header';
+import { usePersistentState } from './hooks/usePersistentState';
 
 // Define View Types
 export enum View {
@@ -28,19 +29,26 @@ export enum View {
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>(View.DASHBOARD);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  // Global Persistent States (Simulated Backend)
+  const [cartCount, setCartCount] = usePersistentState('cartCount', 0);
+  const [crops, setCrops] = usePersistentState('crops', [
+    { id: 1, name: 'Premium Wheat', variety: 'Sharbati', area: '2.5 Acres', planted: 'Oct 12', status: 'Healthy', growth: 65, nextTask: 'Irrigation' },
+    { id: 2, name: 'Cotton', variety: 'Bt Cotton', area: '1.2 Acres', planted: 'Jun 01', status: 'Warning', growth: 85, nextTask: 'Harvesting' },
+  ]);
 
   const renderView = () => {
     switch (currentView) {
       case View.DASHBOARD:
         return <Dashboard onViewChange={setCurrentView} />;
       case View.MARKETPLACE:
-        return <Marketplace />;
+        return <Marketplace onAddToCart={() => setCartCount(prev => prev + 1)} />;
       case View.DISEASE_DETECTION:
-        return <DiseaseDetector />;
+        return <DiseaseDetector onOpenMarketplace={() => setCurrentView(View.MARKETPLACE)} />;
       case View.EXPERT_CHAT:
         return <ExpertChat />;
       case View.FARM_MANAGEMENT:
-        return <FarmManagement />;
+        return <FarmManagement crops={crops} setCrops={setCrops} />;
       case View.SCHEMES:
         return <Schemes onBack={() => setCurrentView(View.DASHBOARD)} />;
       default:
