@@ -17,7 +17,7 @@ const MANDI_RATES = [
 ];
 
 interface MarketplaceProps {
-  onAddToCart: () => void;
+  onAddToCart: (product: { id: string; name: string; price: number | string; image: string; type: string }) => void;
 }
 
 export const Marketplace: React.FC<MarketplaceProps> = ({ onAddToCart }) => {
@@ -148,7 +148,7 @@ export const Marketplace: React.FC<MarketplaceProps> = ({ onAddToCart }) => {
                       <span className="text-2xl font-black text-slate-900">{typeof product.price === 'number' ? `₹${product.price}` : product.price}</span>
                     </div>
                     <button 
-                      onClick={onAddToCart}
+                      onClick={() => onAddToCart({ id: product.id, name: product.name, price: product.price, image: product.image, type: product.type })}
                       className="flex-1 flex items-center justify-center gap-3 bg-slate-900 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-agri-600 transition-all active:scale-90 group/btn shadow-xl shadow-slate-200"
                     >
                       Order <ShoppingCart size={18} className="group-hover/btn:translate-x-1 transition-transform" />

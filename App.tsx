@@ -16,6 +16,14 @@ import { Schemes } from './components/Schemes';
 import { Header } from './components/Header';
 import { usePersistentState } from './hooks/usePersistentState';
 
+export interface CartItem {
+  id: string;
+  name: string;
+  price: number | string;
+  image: string;
+  type: string;
+}
+
 // Define View Types
 export enum View {
   DASHBOARD = 'DASHBOARD',
@@ -31,7 +39,8 @@ const App: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // Global Persistent States (Simulated Backend)
-  const [cartCount, setCartCount] = usePersistentState('cartCount', 0);
+  const [cartItems, setCartItems] = usePersistentState<CartItem[]>('cartItems', []);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [crops, setCrops] = usePersistentState('crops', [
     { id: 1, name: 'Premium Wheat', variety: 'Sharbati', area: '2.5 Acres', planted: 'Oct 12', status: 'Healthy', growth: 65, nextTask: 'Irrigation' },
     { id: 2, name: 'Cotton', variety: 'Bt Cotton', area: '1.2 Acres', planted: 'Jun 01', status: 'Warning', growth: 85, nextTask: 'Harvesting' },
@@ -42,7 +51,7 @@ const App: React.FC = () => {
       case View.DASHBOARD:
         return <Dashboard onViewChange={setCurrentView} />;
       case View.MARKETPLACE:
-        return <Marketplace onAddToCart={() => setCartCount(prev => prev + 1)} />;
+        return <Marketplace onAddToCart={(item) => setCartItems(prev => [...prev, { ...item, id: item.id + '-' + Date.now() }])} />;
       case View.DISEASE_DETECTION:
         return <DiseaseDetector onOpenMarketplace={() => setCurrentView(View.MARKETPLACE)} />;
       case View.EXPERT_CHAT:
@@ -81,8 +90,13 @@ const App: React.FC = () => {
       {/* Header */}
       <Header 
         title="AgriSathi" 
-        onMenuClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
-        cartCount={cartCount}
+        onMenuClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        cartItems={cartItems}
+        onCartOpen={() => setIsCartOpen(true)}
+        isCartOpen={isCartOpen}
+        onCartClose={() => setIsCartOpen(false)}
+        onRemoveFromCart={(id) => setCartItems(prev => prev.filter(item => item.id !== id))}
+        onClearCart={() => setCartItems([])}
       />
 
       {/* Main Content Area - Scrollable */}
