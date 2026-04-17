@@ -74,21 +74,30 @@
     </script>
     
     <style>
-      @layer base {
-        body {
-          @apply font-sans antialiased text-slate-800 bg-slate-50;
-          overflow-x: hidden;
-        }
-        h1, h2, h3, h4, .font-display {
-          @apply font-display tracking-tight text-agri-950;
-        }
+      /* ── Base Styles ───────────────────────────────────────────── */
+      *, *::before, *::after { box-sizing: border-box; }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        color: #1e293b; /* slate-800 */
+        background-color: #f8fafc; /* slate-50 */
+        overflow-x: hidden;
+        margin: 0;
       }
 
-      /* Futurstic Pro Background */
+      h1, h2, h3, h4, .font-display {
+        font-family: 'Outfit', sans-serif;
+        letter-spacing: -0.025em;
+        color: #052e16; /* agri-950 */
+      }
+
+      /* ── Futuristic Pro Background ─────────────────────────────── */
       .pro-bg {
         background-color: #f8fafc;
-        background-image: 
-          radial-gradient(at 0% 0%, hsla(142, 69%, 94%, 0.8) 0, transparent 50%), 
+        background-image:
+          radial-gradient(at 0% 0%, hsla(142, 69%, 94%, 0.8) 0, transparent 50%),
           radial-gradient(at 100% 0%, hsla(45, 93%, 90%, 0.5) 0, transparent 40%),
           radial-gradient(at 50% 100%, hsla(142, 70%, 92%, 0.6) 0, transparent 50%);
         position: fixed;
@@ -96,31 +105,52 @@
         z-index: -1;
       }
 
+      /* ── Scrollbar ─────────────────────────────────────────────── */
       .no-scrollbar::-webkit-scrollbar { display: none; }
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-      /* V2 Glassmorphism */
-      .glass-pro {
-        @apply bg-white/60 backdrop-blur-xl border border-white/40 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)];
-      }
-      .glass-midnight {
-        @apply bg-agri-950/80 backdrop-blur-xl border border-white/10 shadow-2xl;
-      }
-
-      /* Interactive States */
-      .hover-lift { @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-agri-900/5; }
-      
-      /* Bottom Nav Glassmorphism */
+      /* ── Glassmorphism Utilities ───────────────────────────────── */
       .glass {
-        @apply bg-white/70 backdrop-blur-2xl border border-white/50 shadow-[0_8px_32px_0_rgba(31,38,135,0.10)];
+        background: rgba(255, 255, 255, 0.70);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.50);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
       }
 
+      .glass-pro {
+        background: rgba(255, 255, 255, 0.60);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.40);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+      }
+
+      .glass-midnight {
+        background: rgba(5, 46, 22, 0.80); /* agri-950 at 80% */
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.10);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+
+      /* ── Interactive States ────────────────────────────────────── */
+      .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(5, 46, 22, 0.05),
+                    0 8px 10px -6px rgba(5, 46, 22, 0.05);
+      }
+
+      /* ── Safe Area Padding (iOS notch support) ─────────────────── */
       .pb-safe { padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
-      .pt-safe { padding-top: env(safe-area-inset-top); }
+      .pt-safe  { padding-top: env(safe-area-inset-top); }
     </style>
   </head>
   <body>
-    <div class="pro-bg text-agri-950"></div>
+    <div class="pro-bg"></div>
     <div id="root"></div>
     <script type="module" src="./index.tsx"></script>
   </body>
