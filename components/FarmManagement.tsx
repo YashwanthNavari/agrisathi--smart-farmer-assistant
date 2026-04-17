@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sprout, Calendar, Droplets, Thermometer, ChevronRight, Plus, Activity, Clock, Shield, Package, TrendingUp, Info } from 'lucide-react';
 
 const MY_CROPS = [

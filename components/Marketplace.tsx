@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Search, Filter, Star, Truck, ShieldCheck, Tag, MapPin, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
 const PRODUCTS = [
